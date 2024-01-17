@@ -1,0 +1,303 @@
+require 'dotenv'
+Dotenv.load
+
+require "down"
+
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+# https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+# https://docs.fastlane.tools/plugins/available-plugins
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+before_all do |lane, options|
+  if is_ci
+    create_keychain(
+      name: ENV["KEYCHAIN_NAME"],
+      default_keychain: true,
+      unlock: true,
+      timeout: 3600,
+      lock_when_sleeps: true,
+      password: ENV["KEYCHAIN_PASSWORD"]
+    )
+    sh 'brew install graphicsmagick'
+  end
+end
+
+desc "Build app and get IPA"
+lane :build_ios_app_and_get_ipa do |options|
+  update_fastlane_status(status: "Building and exporting IPA", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+
+  begin
+    # Syncing code signing certificates and provisioning profiles
+    sync_code_signing(
+      type: "appstore",
+      app_identifier: options[:bundle_id],
+      readonly: true
+    )
+
+    # Building the app
+    gym(
+      workspace: ENV['FASTLANE_WORKSPACE_PATH'],
+      scheme: ENV['FASTLANE_SCHEME'],
+      clean: true,
+      export_method: 'app-store',
+      output_directory: './build',
+      output_name: 'MyApp.ipa'
+    )
+
+    # Optional: Steps to do something with the .ipa file (like uploading to a server)
+
+  rescue => e
+    update_fastlane_status(status: "Error during build and export of IPA", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+    raise e
+  end
+end
+
+desc "Create a new identifier"
+lane :create_new_app do |options|
+  update_fastlane_status(status: "Generating your app", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  begin
+    Spaceship::ConnectAPI.login
+
+    set_icons
+
+    identifier = Spaceship::Portal.app.create!(bundle_id: options[:bundle_id], name: options[:name])
+    identifier.update_service(Spaceship::Portal.app_service.push_notification.on)
+
+    app = Spaceship::ConnectAPI::App.create(
+      name: options[:name],
+      version_string: ENV['FASTLANE_VERSION_STRING'],
+      sku: options[:sku],
+      primary_locale: ENV['FASTLANE_PRIMARY_LOCALE'],
+      bundle_id: options[:bundle_id],
+      platforms: ["IOS"],
+      company_name: ENV['FASTLANE_COMPANY_NAME'],
+    )
+
+    UI.success("Create app successfully #{options[:bundle_id]} #{options[:name]}")
+
+
+     if app
+      app_store_connect_id = app.body['data']['id']
+      UI.message("Top-level App ID: #{app_store_connect_id}")
+      lane_context[:app_store_connect_id] = app_store_connect_id
+
+      update_wordpress_app_connect_id(
+        app_store_connect_id: app_store_connect_id
+      )
+
+      lane_context[:bundle_id] = options[:bundle_id]
+
+      # Only run the subsequent lanes if create_new_app successfully completes
+      generate_new_cert
+      sync_cert
+      update_app_name
+      update_bundle_id
+      set_icons
+      beta
+     else
+      # Handle the case where app is nil
+      UI.error("Error creating your app: app object is nil")
+     end
+
+  rescue => e
+    update_fastlane_status(status: "Error creating your app", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+    raise e
+  end
+end
+
+desc "Update app display name"
+lane :update_app_name do |options|
+app_name = ENV['APP_NAME_IOS']
+  update_info_plist(
+  plist_path: ENV['FASTLANE_PLIST_PATH'],
+  display_name: options[:name],
+  block: proc do |plist|
+    # Update CFBundleDisplayName
+    plist['CFBundleDisplayName'] = app_name
+  end
+)
+end
+
+desc "Update bundle ID"
+lane :update_bundle_id do
+  update_fastlane_status(status: "Updating your app store bundle ID", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  update_app_identifier(
+    plist_path: ENV['FASTLANE_PLIST_PATH'], # use environment variable
+    app_identifier: lane_context[:bundle_id]
+  )
+
+  rescue => e
+    update_fastlane_status(status: "Error updating your app store bundle ID", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+    raise e
+end
+
+desc "Generate new certificates"
+lane :generate_new_cert do
+  update_fastlane_status(status: "Generating new app store certificates", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  match(
+    type: "appstore",
+    app_identifier: lane_context[:bundle_id],
+    force_for_new_devices: true,
+    readonly: false,
+    keychain_name: ENV["KEYCHAIN_NAME"],
+    keychain_password: ENV["KEYCHAIN_PASSWORD"]
+  )
+
+  rescue => e
+    update_fastlane_status(status: "Error generating new app store certificates", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+  raise e
+end
+
+lane :sync_cert do
+  update_fastlane_status(status: "Syncing your signing certs", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  sync_code_signing(
+    type: "appstore",
+    app_identifier: lane_context[:bundle_id],
+    force_for_new_devices: true,
+    readonly: true
+  )
+
+  rescue => e
+    update_fastlane_status(status: "Error syncing your signing certs", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+  raise e
+end
+
+lane :set_bundle_id do
+  update_fastlane_status(status: "Setting your app bundle id", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  gym(
+    scheme: ENV['FASTLANE_SCHEME'], # use environment variable
+    export_method: "app-store",
+    export_options: {
+      provisioningProfiles: {
+        lane_context[:bundle_id] => "User app beehive"
+      }
+    }
+  )
+    rescue => e
+    # If an error occurs, update status with error message
+    update_fastlane_status(status: "Error setting your app bundle id", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+    raise e
+end
+
+lane :set_icons do |options|
+  update_fastlane_status(status: "Setting your app icons", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  UI.message("Keys of the hash: #{Dir.pwd}")
+  
+
+  downloaded_icon = Down.download(ENV['DOWN_ICON_URL'])
+  source_xcassets_path = './Runner/Images.xcassets'
+
+  appicon(
+    appicon_image_file: downloaded_icon.path,
+    appicon_devices: [:iphone, :ipad, :ios_marketing],
+    appicon_path: source_xcassets_path
+  )
+
+rescue => e
+  # If an error occurs, update status with error message
+  update_fastlane_status(status: "Error setting up your app icons", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+  raise e
+end
+
+
+# ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] = ENV['FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD']
+desc "Push a new beta build to TestFlight"
+lane :beta do
+  update_fastlane_status(status: "Sync code signing", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  
+  sync_code_signing(
+    type: "appstore",
+    app_identifier: lane_context[:bundle_id],
+    force_for_new_devices: true,
+    readonly: true
+  )
+
+  update_fastlane_status(status: "Update code signing settings", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  update_code_signing_settings(
+    use_automatic_signing: false,
+    code_sign_identity: ENV['APPLE_CODE_SIGN_IDENTITY'] # use environment variable
+  )
+
+  app_identifier = lane_context[:bundle_id]
+  match_type = 'appstore'
+  profile_path = ENV["sigh_#{app_identifier}_#{match_type}_profile-path"]
+
+  update_fastlane_status(status: "Update project provisioning", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  update_project_provisioning(
+    target_filter: ENV['FASTLANE_SCHEME'], # use environment variable
+    profile: profile_path,
+  )
+
+  update_fastlane_status(status: "Building app", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  build_app(workspace: ENV['FASTLANE_WORKSPACE_PATH'], scheme: ENV['FASTLANE_SCHEME'])
+
+  update_fastlane_status(status: "Uploading to testflight", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  upload_to_testflight(
+    skip_waiting_for_build_processing: true,
+    apple_id: ENV['APPLE_ID'] # use environment variable
+  )
+
+  update_fastlane_status(status: "Congrats, your app has uploaded successfully.", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
+  rescue => e
+    update_fastlane_status(status: "Error sending build to Test Flight Beta", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
+  raise e
+end
+
+lane :update_fastlane_status do |options|
+  uri = URI.parse('https://beehive.mobi/wp-json/custom/v1/update-deployment-status')
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new(uri.path,
+    {'accept' => 'application/json',
+    'Content-Type' => 'application/x-www-form-urlencoded'})
+
+  # Prepare the parameters
+  parameters = {
+    'wp_deployment_id' => options[:deploymentId],
+    'status' => options[:status]
+  }
+
+  # Include fastlane_error in the parameters if it's provided
+  parameters['fastlane_error'] = options[:fastlaneError] unless options[:fastlaneError].nil?
+
+  request.body = URI.encode_www_form(parameters)
+
+  response = http.request(request)
+
+  puts "Response code: #{response.code}"
+  puts "Response body: #{response.body}"
+end
+
+
+lane :update_wordpress_app_connect_id do |options|
+  uri = URI.parse('https://beehive.mobi/wp-json/custom/v1/update-app-store-connect-id')
+  http = Net::HTTP.new(uri.host, uri.port)
+  http.use_ssl = true
+
+  request = Net::HTTP::Post.new(uri.path,
+    {'accept' => 'application/json',
+    'Content-Type' => 'application/x-www-form-urlencoded'})
+
+  # Prepare the parameters
+  parameters = {
+    'app_id' => ENV['BEEHIVE_APP_ID'],
+    'app_store_connect_app_id' => options[:app_store_connect_id]
+  }
+
+  request.body = URI.encode_www_form(parameters)
+
+  response = http.request(request)
+
+  puts "Response code: #{response.code}"
+  puts "Response body: #{response.body}"
+end
