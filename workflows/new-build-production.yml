@@ -1,0 +1,93 @@
+name: Generate new builds for production
+on:
+  workflow_dispatch:
+    inputs:
+      HOST_URL:
+        description: 'Host URL for the application'
+        required: true
+        default: 'https://beehive.mobi' # You can set a default value here
+      BUNDLE_ID:
+        description: 'App Store Bundle ID'
+        required: true
+        default: 'com.dec30test.1' # You can set a default value here
+      APP_NAME:
+        description: 'App Store App name'
+        required: true
+        default: 'Testing dec30test.1' # You can set a default value here  
+      APP_SKU:
+        description: 'App Store SKU'
+        required: true
+        default: 'dec3020231' # You can set a default value here        
+jobs:
+  # We are disabling ios because it consumes too many minutes in github action (regular min * 10)
+  release-ios:
+    name: Ios - Build a new version
+    runs-on: macos-13
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2.4.1
+        with:
+          node-version: '16.x'
+          cache: 'npm'
+          cache-dependency-path: source/yarn.lock
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '14.2.0'
+
+      - name: Print config value
+        run: pwd && cd source && cat config.json
+      
+      - name: Update config
+        run: pwd && cd source && node update-config.js config.json HOST_URL ${{ github.event.inputs.HOST_URL }}
+
+      - name: Print config value
+        run: pwd && cd source && cat config.json
+        
+      - name: YARN Cache
+        uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
+        with:
+          path: |
+            ${{ steps.yarn-cache-dir-path.outputs.dir }}
+            **/node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+      - name: Install packages
+        run: pwd && cd source && yarn install
+
+      - name: Set Fastlane Environment Variables
+        run: |
+          echo "APP_NAME_IOS=${{ github.event.inputs.APP_NAME }}" >> $GITHUB_ENV
+          # Add more variables as needed
+        
+      - name: Install Ruby & Fastlane
+        run: pwd && cd source && cd ios && bundle install
+
+      - uses: ruby/setup-ruby@v1.82.0
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+          working-directory: './source/ios'
+      - name: setup-cocoapods
+        uses: maxim-lobanov/setup-cocoapods@v1
+        with:
+          podfile-path: ./source/ios/Podfile.lock
+      - name: Pods Cache
+        uses: actions/cache@v2
+        with:
+          path: ./source/ios/Pods
+          key: ${{ runner.os }}-pods-v2-${{ hashFiles('**/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pods-v2-
+      - name: Install pods
+        run: pwd && cd source && cd ios && pod install
+
+      - name: Run iOS app
+        run: pwd && cd source && npm run ios
+        
+      - name: Execute Fastlane command
+        run: pwd && cd source && cd ios && bundle exec fastlane create_new_app bundle_id:"${{ github.event.inputs.BUNDLE_ID }}" name:"${{ github.event.inputs.APP_NAME }}" sku:"${{ github.event.inputs.APP_SKU }}"
+        env:
+          #FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: "nets-yxrj-qpzp-evbi"
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
