@@ -271,3 +271,52 @@ lane :update_wordpress_app_connect_id do |options|
   puts "Response code: #{response.code}"
   puts "Response body: #{response.body}"
 end
+
+desc "Fetch data from the specified API, print the response, and use JSON data as variables"
+lane :fetch_data do
+  
+  # Define the URL and the headers
+  url = URI('https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/2449')
+  headers = {
+    'Accept' => 'application/json',
+    'Authorization' => 'Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE='
+  }
+
+  # Create the HTTP GET request
+  http = Net::HTTP.new(url.host, url.port)
+  http.use_ssl = (url.scheme == "https") # Enable SSL/TLS if required
+  request = Net::HTTP::Get.new(url)
+  headers.each { |key, value| request[key] = value }
+
+  # Perform the request
+  response = http.request(request)
+
+  # Check if the request was successful
+  if response.is_a?(Net::HTTPSuccess)
+    # Store the response body in a variable and parse it as JSON
+    response_data = JSON.parse(response.body)
+    UI.success("Response received and parsed successfully!")
+    
+    # Accessing individual elements of the JSON response
+    # Replace 'key1', 'key2', etc. with actual keys from your JSON response
+    value1 = response_data['id']
+    # value2 = response_data['key2']
+    # Continue for other values you need
+
+    # Example usage of the parsed values
+    UI.message("Value for key1: #{value1}")
+    # UI.message("Value for key2: #{value2}")
+    # Continue for other values you need
+    
+  else
+    UI.error("Failed to fetch data: #{response.code} #{response.message}")
+  end
+
+  # Optionally, you can return the parsed JSON or specific values from it
+  # return response_data
+  # or
+  # return {value1: value1, value2: value2}
+end
+
+# Add more lanes here as needed
+end
