@@ -21,9 +21,12 @@ jobs:
           DATA=$(curl -X 'GET' \
           "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}" \
           -H 'accept: application/json' \
-          -H 'authorization: Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE=')
+          -H 'authorization: Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE=' \
+          -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
           echo "Response data: $DATA"
-          echo "::set-output name=data::$DATA" # Set the output for use in other steps
+          echo "DATA<<EOF" >> $GITHUB_ENV
+          echo "$DATA" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       # Use the data in another step
       - name: Use the Data
