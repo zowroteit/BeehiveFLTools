@@ -13,11 +13,19 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: GET Request with Authorization
-      env:
-        APP_ID: ${{ github.event.inputs.appId || '2449' }} # Use input or default to '2449'
-      run: |
-        curl -X 'GET' \
-        "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}" \
-        -H 'accept: application/json' \
-        -H 'authorization: Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE='
+      - name: GET Request with Authorization
+        id: get_request # Assign an ID to the step to access its outputs
+        env:
+          APP_ID: ${{ github.event.inputs.appId || '2449' }} # Use input or default to '2449'
+        run: |
+          DATA=$(curl -X 'GET' \
+          "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}" \
+          -H 'accept: application/json' \
+          -H 'authorization: Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE=')
+          echo "Response data: $DATA"
+          echo "::set-output name=data::$DATA" # Set the output for use in other steps
+
+      # Use the data in another step
+      - name: Use the Data
+        run: |
+          echo "The data is: ${{ steps.get_request.outputs.data }}"
