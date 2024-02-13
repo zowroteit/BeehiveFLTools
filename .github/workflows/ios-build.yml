@@ -31,3 +31,15 @@ jobs:
           echo "::set-output name=response::$RESPONSE"
           echo "::set-output name=id::$ID"
         shell: bash
+        
+      - name: Download ZIP file
+        run: |
+          wget https://source-code-zip-ios.s3.us-west-1.amazonaws.com/1234567/app-source.zip -O app-source.zip
+          
+      - name: Unzip the downloaded file
+        run: |
+          unzip app-source.zip -d app-source
+          
+      - name: List directories
+        run: |
+          ls -l app-source/
