@@ -1,34 +1,21 @@
-name: GET Request Action With Authorization
+name: Echo GET Request Response
 
 on:
   workflow_dispatch:
-    inputs:
-      appId:
-        description: 'App ID'
-        required: true
-        default: '2449'
+  push:
+    branches:
+      - main  # Or your default branch
 
 jobs:
-  make-get-request:
+  make-get-request-and-echo-response:
     runs-on: ubuntu-latest
 
     steps:
-      - name: GET Request with Authorization
-        id: get_request # Assign an ID to the step to access its outputs
-        env:
-          APP_ID: ${{ github.event.inputs.appId || '2449' }} # Use input or default to '2449'
-        run: |
-          DATA=$(curl -X 'GET' \
-          "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}" \
-          -H 'accept: application/json' \
-          -H 'authorization: Basic Y2hyaXNAY2hyaXN0b3BoZXJrZW5kcmljay5pbzpDYW1kZW5vdHQxMjM0NSE=' \
-          -H 'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3')
-          echo "Response data: $DATA"
-          echo "DATA<<EOF" >> $GITHUB_ENV
-          echo "$DATA" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      # Use the data in another step
-      - name: Use the Data
+      - name: Make GET request and echo response
         run: |
-          echo "The data is: ${{ steps.get_request.outputs.data }}"
+          RESPONSE=$(curl -sS "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/2449")
+          echo "Response from GET request:"
+          echo "$RESPONSE"
