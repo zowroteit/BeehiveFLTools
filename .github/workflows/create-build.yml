@@ -1,7 +1,12 @@
-name: Echo GET Request Response
+name: Echo GET Request Response with App ID
 
 on:
   workflow_dispatch:
+    inputs:
+      appId:
+        description: 'App ID'
+        required: true
+        default: '2449'  # Set a default value or remove this line if you don't want a default
   push:
     branches:
       - main  # Or your default branch
@@ -16,6 +21,7 @@ jobs:
 
       - name: Make GET request and echo response
         run: |
-          RESPONSE=$(curl -sS "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/2449")
-          echo "Response from GET request:"
+          APP_ID="${{ github.event.inputs.appId }}"
+          RESPONSE=$(curl -sS "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}")
+          echo "Response from GET request for App ID ${APP_ID}:"
           echo "$RESPONSE"
