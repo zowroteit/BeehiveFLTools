@@ -1,4 +1,4 @@
-name: Echo GET Request Response with App ID and Store ID
+name: Echo GET Request Response with App ID
 
 on:
   workflow_dispatch:
@@ -19,13 +19,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Make GET request and store ID
+      - name: Make GET request and echo response
         run: |
           APP_ID="${{ github.event.inputs.appId }}"
           RESPONSE=$(curl -sS "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${APP_ID}")
-          APP_ID=$(echo "$RESPONSE" | jq '.id')
-          echo "APP_ID=$APP_ID" >> $GITHUB_ENV
-
-      - name: Echo stored ID
-        run: |
-          echo "Stored ID: $APP_ID"
+          echo "Response from GET request for App ID ${APP_ID}:"
+          echo "$RESPONSE"
