@@ -31,10 +31,6 @@ jobs:
           echo "::set-output name=id::$ID"
 
         shell: bash
-
-      # Optionally, ensure jq is installed (if necessary)
-      - name: Install jq
-        run: sudo apt-get install jq
     
       # Example of using the outputs in the same job (you can also use them in subsequent jobs)
       - name: Use the Outputs
