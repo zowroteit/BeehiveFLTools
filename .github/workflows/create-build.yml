@@ -31,10 +31,3 @@ jobs:
           echo "::set-output name=response::$RESPONSE"
           echo "::set-output name=id::$ID"
         shell: bash
-    
-      # Example of using the outputs in the same job (you can also use them in subsequent jobs)
-      - name: Use the Outputs
-        run: |
-          echo "The full response was: ${{ needs.make_request_and_store_response.outputs.response }}"
-          echo "The ID extracted was: ${{ needs.make_request_and_store_response.outputs.id }}"
-        if: ${{ always() }}  # This ensures it runs even if the previous step fails
