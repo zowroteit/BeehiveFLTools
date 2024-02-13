@@ -1,9 +1,12 @@
 name: Make GET Request and Store Response
 
 on:
-  push:
-    branches:
-      - main  # Adjust this as necessary
+  workflow_dispatch:
+    inputs:
+      app_id:
+        description: 'App ID'
+        required: true
+        default: '2449'  # You can adjust the default value as necessary
 
 jobs:
   make_request_and_store_response:
@@ -18,18 +21,15 @@ jobs:
       - name: Make GET request and extract ID
         id: request_step
         run: |
-          # Make the GET request
-          RESPONSE=$(curl -s "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/2449")
+          # Make the GET request using the app_id input
+          RESPONSE=$(curl -s "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${{ github.event.inputs.app_id }}")
           echo "Full response: $RESPONSE"
-
           # Extract the ID using jq
           ID=$(echo $RESPONSE | jq '.id')
           echo "Extracted ID: $ID"
-
           # Set the response and ID as outputs
           echo "::set-output name=response::$RESPONSE"
           echo "::set-output name=id::$ID"
-
         shell: bash
     
       # Example of using the outputs in the same job (you can also use them in subsequent jobs)
