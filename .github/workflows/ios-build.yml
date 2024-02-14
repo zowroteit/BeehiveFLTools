@@ -43,3 +43,22 @@ jobs:
       - name: List directories
         run: |
           ls -l app-source/
+          # Previous steps remain the same...
+
+      - name: Prepare BeehiveIOS directory and merge BeehiveFLTools
+        run: |
+          mkdir app-source/BeehiveIOS
+          cp -a ./* app-source/BeehiveIOS/
+          
+      - name: Change directory and run Fastlane
+        run: |
+          cd app-source/BeehiveIOS
+          bundle install
+          # Assuming 'Chick-fil-a' is the correct scheme for all cases
+          # If you need to dynamically determine the scheme, additional scripting will be required
+          bundle exec fastlane build_and_upload_to_s3 scheme:'Chick-fil-a'
+        env:
+          # Make sure to set up your AWS credentials for the S3 upload to work
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
