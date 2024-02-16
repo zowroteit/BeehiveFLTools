@@ -25,7 +25,7 @@ jobs:
         id: request_step
         run: |
           # Make the GET request using the app_id input
-          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ inputs.jwtToken }}" "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}")
+          RESPONSE=$(curl -s -H "x-access-token: ${{ inputs.jwtToken }}" "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}")
           echo "Full response: $RESPONSE"
           # Extract the ID using jq
           ID=$(echo $RESPONSE | jq '.id')
