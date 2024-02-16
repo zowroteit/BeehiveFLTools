@@ -22,7 +22,7 @@ jobs:
         id: request_step
         run: |
           # Make the GET request using the app_id input
-          RESPONSE=$(curl -s "https://stg-usersurveysite-beehivestag.kinsta.cloud/wp-json/wp/v2/apps/${{ github.event.inputs.app_id }}")
+          RESPONSE=$(curl -s "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}")
           echo "Full response: $RESPONSE"
           # Extract the ID using jq
           ID=$(echo $RESPONSE | jq '.id')
