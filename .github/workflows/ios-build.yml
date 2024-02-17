@@ -35,6 +35,10 @@ jobs:
       - name: Unzip the downloaded file
         run: |
           unzip src.zip -d src
+
+      - name: cd into src
+        run: |
+          cd ./src
           
       - name: List source folder
         run: |
