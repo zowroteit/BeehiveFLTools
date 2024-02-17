@@ -84,6 +84,12 @@ lane :create_new_app do |options|
   end
 end
 
+desc "Test lane"
+lane :hello_world do
+  sh "echo 'Hello World'"
+end
+
+
 desc "Update app display name"
 lane :update_app_name do |options|
 app_name = ENV['APP_NAME_IOS']
