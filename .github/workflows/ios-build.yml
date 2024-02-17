@@ -30,16 +30,14 @@ jobs:
           
       - name: Download Source Code ZIP file
         run: |
-          wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O src_code.zip
+          wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O src.zip
 
       - name: Unzip the downloaded file
         run: |
-          unzip src_code.zip -d src_code
+          unzip src.zip -d src
 
-      - name: cd into src
-        run: |
-          cd ./src_code
-          
+      # Use the working-directory keyword for steps that need to be executed within the src_code directory
       - name: List source folder
         run: |
           ls
+        working-directory: ./src
