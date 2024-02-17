@@ -1,7 +1,7 @@
 require 'dotenv'
 Dotenv.load
 
-require "down"
+fastlane_require 'down'
 
 # This file contains the fastlane.tools configuration
 # You can find the documentation at https://docs.fastlane.tools
