@@ -13,7 +13,8 @@ on:
         default: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1Y2Q5NWM0NzIwNWFhY2NhYjBkOGRlZSIsImlhdCI6MTcwODE0NzE3OSwiZXhwIjoxNzA4MjMzNTc5fQ.UfugeTLzA1AZlcdjE2gKk9KGKMxPjctNJW5mQi580Cg'
 jobs:
   make_request_and_store_response:
-    runs-on: ubuntu-latest
+    name: Ios - Build a new version
+    runs-on: macos-13
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
