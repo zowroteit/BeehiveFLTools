@@ -46,3 +46,15 @@ jobs:
         run: |
           ls
         working-directory: ./ios
+
+      # Use the working-directory keyword for steps that need to be executed within the src_code directory
+      - name: List source folder
+        run: |
+          cp -rf ../fastlane .
+        working-directory: ./ios
+
+      # Use the working-directory keyword for steps that need to be executed within the src_code directory
+      - name: List source folder
+        run: |
+          ls
+        working-directory: ./ios
