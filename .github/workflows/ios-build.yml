@@ -32,6 +32,9 @@ jobs:
         run: |
           gem install fastlane
 
+      - name: Install Down gem
+        run: gem install down
+
       - name: Curl request and extract _id
         run: |
           RESPONSE=$(curl --location "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}" \
