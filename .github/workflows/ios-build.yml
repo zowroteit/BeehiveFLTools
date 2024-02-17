@@ -6,11 +6,11 @@ on:
       app_id:
         description: 'App ID'
         required: true
-        default: '2449'  # You can adjust the default value as necessary
+        default: '65ceac31a02e415f4ba6fe55'  # You can adjust the default value as necessary
       jwtToken:
         description: 'JWT Token for Authentication'
         required: true
-        default: ''
+        default: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1Y2Q5NWM0NzIwNWFhY2NhYjBkOGRlZSIsImlhdCI6MTcwODE0NzE3OSwiZXhwIjoxNzA4MjMzNTc5fQ.UfugeTLzA1AZlcdjE2gKk9KGKMxPjctNJW5mQi580Cg'
 jobs:
   make_request_and_store_response:
     runs-on: ubuntu-latest
