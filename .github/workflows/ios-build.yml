@@ -14,54 +14,16 @@ on:
 jobs:
   make_request_and_store_response:
     runs-on: ubuntu-latest
-    outputs:
-      response: ${{ steps.request_step.outputs.response }}
-      id: ${{ steps.request_step.outputs.id }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Make GET request and extract ID
-        id: request_step
+      - name: Curl request and extract _id
         run: |
-          # Make the GET request using the app_id input
-          RESPONSE=$(curl -s -H "x-access-token: ${{ inputs.jwtToken }}" "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}")
-          echo "Full response: $RESPONSE"
-          # Extract the ID using jq
-          ID=$(echo $RESPONSE | jq '.id')
-          echo "Extracted ID: $ID"
-          # Set the response and ID as outputs
-          echo "::set-output name=response::$RESPONSE"
-          echo "::set-output name=id::$ID"
-        shell: bash
-        
-      - name: Download ZIP file
-        run: |
-          wget https://source-code-zip-ios.s3.us-west-1.amazonaws.com/1234567/app-source.zip -O app-source.zip
-          
-      - name: Unzip the downloaded file
-        run: |
-          unzip app-source.zip -d app-source
-          
-      - name: List directories
-        run: |
-          ls -l app-source/
-          # Previous steps remain the same...
-
-      - name: Prepare BeehiveIOS directory and merge BeehiveFLTools
-        run: |
-          mkdir app-source/BeehiveIOS
-          cp -a ./* app-source/BeehiveIOS/
-          
-      - name: Change directory and run Fastlane
-        run: |
-          cd app-source/BeehiveIOS
-          bundle install
-          # Assuming 'Chick-fil-a' is the correct scheme for all cases
-          # If you need to dynamically determine the scheme, additional scripting will be required
-          bundle exec fastlane build_and_upload_to_s3 scheme:'Chick-fil-a'
-        env:
-          # Make sure to set up your AWS credentials for the S3 upload to work
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          RESPONSE=$(curl --location 'http://localhost:3000/get-app?id=65ceac31a02e415f4ba6fe55' \
+          --header 'x-access-token: ${{ secrets.ACCESS_TOKEN }}')
+          echo "Response: $RESPONSE"
+          ID=$(echo $RESPONSE | jq -r '._id')
+          echo "Extracted _id: $ID"
+   
 
