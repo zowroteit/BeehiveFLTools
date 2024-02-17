@@ -285,9 +285,10 @@ end
     # Build your app
     gym(
       scheme: "JokerApptest", # Replace with your scheme
-      export_method: "development", # Use "app-store", "ad-hoc", "enterprise", or "development"
+      export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
       output_directory: "./build", # Directory where the IPA will be stored
-      output_name: "YourAppName.ipa" # The name of your IPA file
+      output_name: "YourAppName.ipa", # The name of your IPA file
+      allow_provisioning_updates: true
     )
 
     # Example step to upload your IPA and get the URL - replace this with your actual method
