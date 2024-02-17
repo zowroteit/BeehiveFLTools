@@ -285,7 +285,7 @@ end
     # Build your app
     gym(
       scheme: "JokerApptest", # Replace with your scheme
-      export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
+      export_method: "development", # Use "app-store", "ad-hoc", "enterprise", or "development"
       output_directory: "./build", # Directory where the IPA will be stored
       output_name: "YourAppName.ipa" # The name of your IPA file
     )
