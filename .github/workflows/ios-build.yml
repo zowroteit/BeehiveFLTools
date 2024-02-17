@@ -30,15 +30,15 @@ jobs:
           
       - name: Download Source Code ZIP file
         run: |
-          wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O src.zip
+          wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O src_code.zip
 
       - name: Unzip the downloaded file
         run: |
-          unzip src.zip -d src
+          unzip src_code.zip -d src_code
 
       - name: cd into src
         run: |
-          cd ./src/src
+          cd ./src_code
           
       - name: List source folder
         run: |
