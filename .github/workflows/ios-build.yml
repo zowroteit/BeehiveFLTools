@@ -88,6 +88,6 @@ jobs:
 
       - name: Run fastlane
         run: |
-          bundle exec fastlane build_and_upload_to_s3 scheme:'Chick-fil-a'
+          bundle exec fastlane hello_world
         working-directory: ./ios/fastlane
         
