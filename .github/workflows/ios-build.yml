@@ -38,7 +38,7 @@ jobs:
 
       - name: cd into src
         run: |
-          cd ./src
+          cd ./src/src
           
       - name: List source folder
         run: |
