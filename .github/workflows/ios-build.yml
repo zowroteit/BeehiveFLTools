@@ -34,10 +34,10 @@ jobs:
 
       - name: Unzip the downloaded file
         run: |
-          unzip src.zip -d src
+          unzip src.zip -d ios
 
       # Use the working-directory keyword for steps that need to be executed within the src_code directory
       - name: List source folder
         run: |
           ls
-        working-directory: ./src
+        working-directory: ./ios
