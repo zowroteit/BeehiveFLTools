@@ -23,11 +23,6 @@ jobs:
         with:
           xcode-version: '14.2.0'
           
-      - name: Set up Ruby (Fastlane is a Ruby gem)
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.7' # Specify the Ruby version you need for your project
-
       - name: Install Fastlane
         run: |
           gem install fastlane
@@ -60,7 +55,7 @@ jobs:
           ls
         working-directory: ./ios
 
-      - name: List source folder
+      - name: Move fastlane folder into ios
         run: |
           cp -rf ../fastlane .
         working-directory: ./ios
@@ -73,6 +68,17 @@ jobs:
       - name: List fastlane directory
         run: |
           ls
+        working-directory: ./ios/fastlane
+
+      - name: List fastlane directory
+        run: |
+          ls
+        working-directory: ./ios/fastlane
+
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
         working-directory: ./ios/fastlane
 
       - name: Run fastlane
