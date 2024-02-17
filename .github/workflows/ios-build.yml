@@ -64,6 +64,11 @@ jobs:
         run: |
           cp -rf ../fastlane .
         working-directory: ./ios
+
+      - name: Move Gemfile folder into ios
+        run: |
+          cp ../Gemfile .
+        working-directory: ./ios
         
       - name: List source folder
         run: |
@@ -86,7 +91,7 @@ jobs:
           gem install down
           bundle _2.4.22_ install
           bundle exec fastlane hello_world
-        working-directory: ./ios/fastlane
+        working-directory: ./ios
 
 
         
