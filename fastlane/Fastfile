@@ -327,15 +327,4 @@ end
 # Add more lanes here as needed
 end
 
-lane :build_and_upload_to_s3 do
-  # Build your app
-  gym(
-    scheme: "Chick-fil-a",
-    export_method: "app-store", # or use "ad-hoc", "enterprise", "development" based on your need
-    output_directory: "./build",
-    output_name: "Chick-fil-a.ipa"
-  )
 
-  # Upload to S3
-  sh "aws s3 cp ./build/Chick-fil-a.ipa s3://your-s3-bucket-name/path/to/upload/"
-end
