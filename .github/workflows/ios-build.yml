@@ -29,4 +29,4 @@ jobs:
    
       - name: Download Source Code ZIP file
         run: |
-          wget https://source-code-zip-ios.s3.us-west-1.amazonaws.com/$SOURCE_FILE_BUCKET_KEY -O app-source.zip
+          wget https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${{SOURCE_FILE_BUCKET_KEY}} -O app-source.zip
