@@ -26,7 +26,8 @@ jobs:
           ID=$(echo $RESPONSE | jq -r '._id')
           SOURCE_FILE_BUCKET_KEY=$(echo $RESPONSE | jq -r '.sourceFileBucketKey')
           echo "Extracted _id: $ID"
-   
+          echo "SOURCE_FILE_BUCKET_KEY=${SOURCE_FILE_BUCKET_KEY}" >> $GITHUB_ENV
+          
       - name: Download Source Code ZIP file
         run: |
-          wget https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${{SOURCE_FILE_BUCKET_KEY}} -O app-source.zip
+          wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O app-source.zip
