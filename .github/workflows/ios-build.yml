@@ -35,6 +35,11 @@ jobs:
       - name: Unzip the downloaded file
         run: |
           unzip src.zip -d ios
+      # Use the working-directory keyword for steps that need to be executed within the src_code directory
+      - name: Remove MACOSX files
+        run: |
+          rm -rf __MACOSX
+        working-directory: ./ios
 
       # Use the working-directory keyword for steps that need to be executed within the src_code directory
       - name: List source folder
