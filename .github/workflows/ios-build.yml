@@ -22,6 +22,11 @@ jobs:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '14.2.0'
+
+      - name: Set up Ruby (Fastlane is a Ruby gem)
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7' # Specify the Ruby version you need for your project
           
       - name: Install Fastlane
         run: |
