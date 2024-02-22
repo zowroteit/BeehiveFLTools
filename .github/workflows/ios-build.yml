@@ -39,8 +39,10 @@ jobs:
           echo "Response: $RESPONSE"
           ID=$(echo $RESPONSE | jq -r '._id')
           SOURCE_FILE_BUCKET_KEY=$(echo $RESPONSE | jq -r '.sourceFileBucketKey')
+          BUNDLE_IDENTIFIER=$(echo $RESPONSE | jq -r '.identifier.attributes.identifier')
           echo "Extracted _id: $ID"
           echo "SOURCE_FILE_BUCKET_KEY=${SOURCE_FILE_BUCKET_KEY}" >> $GITHUB_ENV
+          echo "BUNDLE_IDENTIFIER=${BUNDLE_IDENTIFIER}" >> $GITHUB_ENV
           
       - name: Download Source Code ZIP file
         run: |
@@ -92,6 +94,8 @@ jobs:
           bundle _2.4.22_ install
           bundle exec fastlane build_and_echo_ipa_url
         working-directory: ./ios
+        env:
+          BUNDLE_IDENTIFIER: ${{ env.BUNDLE_IDENTIFIER }}
 
 
         
