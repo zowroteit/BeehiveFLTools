@@ -287,13 +287,14 @@ end
       scheme: "JokerApptest", # Replace with your scheme
       export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
       output_directory: "./build", # Directory where the IPA will be stored
-      output_name: "User1234567Build1.ipa"
+      output_name: "User1234567Build1.ipa",
+      xcargs: "-allowProvisioningUpdates"
     )
 
     # Example step to upload your IPA and get the URL - replace this with your actual method
     # For demonstration purposes only
-    ipa_path = "./build/YourAppName.ipa"
-    ipa_url = "https://example.com/path/to/YourAppName.ipa" # This should be replaced with the actual URL
+    ipa_path = "./build/User1234567Build1.ipa"
+    ipa_url = "https://example.com/path/to/User1234567Build1.ipa" # This should be replaced with the actual URL
     puts "IPA URL: #{ipa_url}"
   end
 
