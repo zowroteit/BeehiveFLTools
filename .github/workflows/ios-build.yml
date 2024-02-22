@@ -91,6 +91,9 @@ jobs:
         run: |
           echo "${{ secrets.P8FILE }}" > ./ios/AuthKey_979XF8DJ48.p8
         shell: bash
+
+      - name: Verify .p8 file creation
+        run: ls -l ./ios/
         
       - name: Install dependencies and run fastlane
         run: |
