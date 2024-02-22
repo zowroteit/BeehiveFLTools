@@ -281,15 +281,31 @@ end
 
 
   desc "Build the app and echo the IPA URL"
-  lane :build_and_echo_ipa_url do
-    # Build your app
-    gym(
-      scheme: "JokerApptest", # Replace with your scheme
-      export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
-      output_directory: "./build", # Directory where the IPA will be stored
-      output_name: "User1234567Build1.ipa",
-      xcargs: "-allowProvisioningUpdates"
+  lane :build_and_echo_ipa_url do |options|
+
+  bundle_identifier = options[:bundle_identifier]
+
+   match(
+    type: "appstore",
+    app_identifier: bundle_identifier,
+    readonly: true, # Set to false if you want to generate new profiles or certificates
+    api_key: app_store_connect_api_key(
+      key_id: "979XF8DJ48",
+      issuer_id: "02d38ffb-4372-4020-bd4a-656c8c696eb0",
+      key_filepath: "./ios/AuthKey_979XF8DJ48.p8", # Path to your .p8 file
+      # key_content: ENV["APP_STORE_CONNECT_API_KEY"], # Alternatively, use the key content directly from an environment variable
+      in_house: false # Set to true if you're using an Enterprise account
     )
+  )
+
+  # Build your app
+  gym(
+    scheme: "JokerApptest", # Replace with your scheme
+    export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
+    output_directory: "./build", # Directory where the IPA will be stored
+    output_name: "User1234567Build1.ipa",
+    xcargs: "-allowProvisioningUpdates"
+  )
 
     # Example step to upload your IPA and get the URL - replace this with your actual method
     # For demonstration purposes only
