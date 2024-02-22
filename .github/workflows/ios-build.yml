@@ -34,7 +34,7 @@ jobs:
 
       - name: Curl request and extract _id
         run: |
-          RESPONSE=$(curl --location "https://qikmobileapp-3be95504c721.herokuapp.com/get-app?id=${{ github.event.inputs.app_id }}" \
+          RESPONSE=$(curl --location "https://qikmobileapp-3be95504c721.herokuapp.com/api/user-app/${{ github.event.inputs.app_id }}" \
           --header "x-access-token: ${{ github.event.inputs.jwtToken }}")
           echo "Response: $RESPONSE"
           ID=$(echo $RESPONSE | jq -r '._id')
