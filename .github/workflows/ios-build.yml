@@ -86,7 +86,12 @@ jobs:
         run: |
           ls
         working-directory: ./ios/fastlane
-
+        
+      - name: Create App Store Connect API Key File
+        run: |
+          echo "${{ secrets.P8FILE }}" > ./ios/AuthKey_979XF8DJ48.p8
+        shell: bash
+        
       - name: Install dependencies and run fastlane
         run: |
           gem install bundler -v 2.4.22
