@@ -289,8 +289,11 @@ end
     type: "appstore",
     app_identifier: bundle_identifier,
     readonly: false,
-    keychain_name: ENV["KEYCHAIN_NAME"],
-    keychain_password: ENV["KEYCHAIN_PASSWORD"],
+    export_options: {
+        provisioningProfiles: { 
+          bundle_identifier => "test_profile_app"
+        }
+    },
     api_key: app_store_connect_api_key(
       key_id: "979XF8DJ48",
       issuer_id: "02d38ffb-4372-4020-bd4a-656c8c696eb0",
