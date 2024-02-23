@@ -288,12 +288,7 @@ end
    match(
     type: "appstore",
     app_identifier: bundle_identifier,
-    readonly: true,
-    export_options: {
-        provisioningProfiles: { 
-          bundle_identifier => "test_profile_app"
-        }
-    },
+    readonly: false,
     api_key: app_store_connect_api_key(
       key_id: "979XF8DJ48",
       issuer_id: "02d38ffb-4372-4020-bd4a-656c8c696eb0",
@@ -309,7 +304,11 @@ end
     export_method: "app-store", # Use "app-store", "ad-hoc", "enterprise", or "development"
     output_directory: "./build", # Directory where the IPA will be stored
     output_name: "User1234567Build1.ipa",
-    xcargs: "-allowProvisioningUpdates"
+     export_options: {
+        provisioningProfiles: { 
+          bundle_identifier => "test_profile_app"
+        }
+    }
   )
 
     # Example step to upload your IPA and get the URL - replace this with your actual method
