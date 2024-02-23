@@ -306,7 +306,7 @@ end
     output_name: "User1234567Build1.ipa",
      export_options: {
         provisioningProfiles: { 
-          "#{bundle_identifier}" => "test_profile_app"
+          "com.tesjitjitraeeaf.test" => "test_profile_app"
         }
     }
   )
