@@ -48,9 +48,9 @@ jobs:
       #   run: |
       #     wget "https://source-code-zip-ios.s3.us-west-1.amazonaws.com/${SOURCE_FILE_BUCKET_KEY}" -O src.zip
 
-       - name: Copy Archive.zip from repository
+      - name: Copy Archive.zip from repository
         run: cp Archive.zip src.zip
-        
+         
       - name: Unzip the downloaded file
         run: |
           unzip src.zip -d ios
