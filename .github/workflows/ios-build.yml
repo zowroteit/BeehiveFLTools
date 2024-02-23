@@ -97,6 +97,11 @@ jobs:
 
       - name: Verify .p8 file creation
         run: ls -l ./ios/
+
+      - name: Install Provisioning Profile
+        run: |
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles/
+          cp test_profile_app.mobileprovision ~/Library/MobileDevice/Provisioning\ Profiles/
         
       - name: Install dependencies and run fastlane
         run: |
