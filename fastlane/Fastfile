@@ -288,7 +288,7 @@ end
    match(
     type: "appstore",
     app_identifier: bundle_identifier,
-    readonly: false,
+    readonly: true,
     export_options: {
         provisioningProfiles: { 
           bundle_identifier => "test_profile_app"
