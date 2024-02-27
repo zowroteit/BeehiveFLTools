@@ -192,7 +192,7 @@ lane :beta do
   
   sync_code_signing(
     type: "appstore",
-    app_identifier: lane_context[:bundle_id],
+    app_identifier: "com.tesjitjitraeeaf.test",
     force_for_new_devices: true,
     readonly: true
   )
@@ -202,8 +202,8 @@ lane :beta do
     use_automatic_signing: false,
     code_sign_identity: ENV['APPLE_CODE_SIGN_IDENTITY'] # use environment variable
   )
-
-  app_identifier = lane_context[:bundle_id]
+  com.tesjitjitraeeaf.test
+  app_identifier = "com.tesjitjitraeeaf.test"
   match_type = 'appstore'
   profile_path = ENV["sigh_#{app_identifier}_#{match_type}_profile-path"]
 
