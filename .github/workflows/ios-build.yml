@@ -6,11 +6,27 @@ on:
       app_id:
         description: 'App ID'
         required: true
-        default: '65ceac31a02e415f4ba6fe55'  # You can adjust the default value as necessary
+        default: '65d433bc1f407e4d2d8904a7'  # You can adjust the default value as necessary
       jwtToken:
         description: 'JWT Token for Authentication'
         required: true
         default: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY1Y2Q5NWM0NzIwNWFhY2NhYjBkOGRlZSIsImlhdCI6MTcwODE0NzE3OSwiZXhwIjoxNzA4MjMzNTc5fQ.UfugeTLzA1AZlcdjE2gKk9KGKMxPjctNJW5mQi580Cg'
+      HOST_URL:
+        description: 'Host URL for the application'
+        required: true
+        default: 'https://beehive.mobi' # You can set a default value here
+      BUNDLE_ID:
+        description: 'App Store Bundle ID'
+        required: true
+        default: 'com.dec30test.1' # You can set a default value here
+      APP_NAME:
+        description: 'App Store App name'
+        required: true
+        default: 'Testing dec30test.1' # You can set a default value here  
+      APP_SKU:
+        description: 'App Store SKU'
+        required: true
+        default: 'dec3020231' # You can set a default value here   
 jobs:
   make_request_and_store_response:
     name: Ios - Build a new version
@@ -109,7 +125,7 @@ jobs:
           gem install down
           bundle _2.4.22_ install
           # bundle exec fastlane build_and_echo_ipa_url bundle_identifier:${{ env.BUNDLE_IDENTIFIER }}
-          bundle exec fastlane beta
+          bundle exec fastlane beta bundle_id:"${{ github.event.inputs.BUNDLE_ID }}"
         working-directory: ./ios
         env:
           BUNDLE_IDENTIFIER: ${{ env.BUNDLE_IDENTIFIER }}
