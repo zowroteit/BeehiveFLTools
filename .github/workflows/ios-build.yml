@@ -71,6 +71,11 @@ jobs:
         run: |
           unzip src.zip -d ios
 
+      - name: Install CocoaPods dependencies
+        run: |
+          cd ios && pod install
+        shell: bash
+
       - name: Remove MACOSX files
         run: |
           rm -rf __MACOSX
