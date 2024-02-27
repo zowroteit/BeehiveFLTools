@@ -197,7 +197,6 @@ lane :beta do
     readonly: true
   )
 
-  update_fastlane_status(status: "Update code signing settings", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
   update_code_signing_settings(
     use_automatic_signing: false,
     code_sign_identity: ENV['APPLE_CODE_SIGN_IDENTITY'] # use environment variable
@@ -207,22 +206,18 @@ lane :beta do
   match_type = 'appstore'
   profile_path = ENV["sigh_#{app_identifier}_#{match_type}_profile-path"]
 
-  update_fastlane_status(status: "Update project provisioning", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
   update_project_provisioning(
     target_filter: ENV['FASTLANE_SCHEME'], # use environment variable
     profile: profile_path,
   )
 
-  update_fastlane_status(status: "Building app", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
   build_app(workspace: ENV['FASTLANE_WORKSPACE_PATH'], scheme: ENV['FASTLANE_SCHEME'])
 
-  update_fastlane_status(status: "Uploading to testflight", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
   upload_to_testflight(
     skip_waiting_for_build_processing: true,
     apple_id: ENV['APPLE_ID'] # use environment variable
   )
 
-  update_fastlane_status(status: "Congrats, your app has uploaded successfully.", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
   rescue => e
     update_fastlane_status(status: "Error sending build to Test Flight Beta", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
   raise e
