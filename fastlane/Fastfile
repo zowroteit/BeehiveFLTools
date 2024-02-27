@@ -211,7 +211,7 @@ lane :beta do |options|
     profile: profile_path,
   )
 
-  build_app(workspace: ENV['FASTLANE_PROJECT_PATH'], scheme: ENV['FASTLANE_SCHEME'])
+  build_app(project: ENV['FASTLANE_PROJECT_PATH'], scheme: ENV['FASTLANE_SCHEME'])
 
   upload_to_testflight(
     skip_waiting_for_build_processing: true,
