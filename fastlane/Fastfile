@@ -194,7 +194,7 @@ lane :beta do |options|
     type: "appstore",
     app_identifier: bundle_identifier,
     force_for_new_devices: true,
-    readonly: true
+    readonly: false
   )
 
   update_code_signing_settings(
