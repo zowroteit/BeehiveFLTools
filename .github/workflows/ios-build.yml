@@ -128,7 +128,7 @@ jobs:
           bundle exec fastlane beta bundle_identifier:"${{ github.event.inputs.BUNDLE_ID }}"
         working-directory: ./ios
         env:
-          BUNDLE_IDENTIFIER: ${{ env.BUNDLE_IDENTIFIER }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
 
 
         
