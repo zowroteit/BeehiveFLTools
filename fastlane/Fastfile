@@ -188,8 +188,7 @@ end
 # ENV["FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD"] = ENV['FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD']
 desc "Push a new beta build to TestFlight"
 lane :beta do
-  update_fastlane_status(status: "Sync code signing", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'])
-  
+ 
   sync_code_signing(
     type: "appstore",
     app_identifier: "com.tesjitjitraeeaf.test",
@@ -217,10 +216,6 @@ lane :beta do
     skip_waiting_for_build_processing: true,
     apple_id: ENV['APPLE_ID'] # use environment variable
   )
-
-  rescue => e
-    update_fastlane_status(status: "Error sending build to Test Flight Beta", deploymentId: ENV['FASTLANE_DEPLOYMENT_ID'], fastlaneError: e.message)
-  raise e
 end
 
 lane :update_fastlane_status do |options|
