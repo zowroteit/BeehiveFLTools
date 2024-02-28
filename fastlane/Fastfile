@@ -212,13 +212,15 @@ lane :beta do |options|
     target_filter: ENV['FASTLANE_SCHEME'], # use environment variable
     profile: profile_path,
   )
+  match(type: "appstore") # You can change this to "development" or "adhoc" depending on your needs
+
   gym(
-    scheme: ENV['FASTLANE_SCHEME'],
+    scheme: scheme,
     clean: true,
     export_method: "app-store", # Change to "development" or "ad-hoc" as needed
-    include_bitcode: true,
-    include_symbols: true,
-    output_directory: "./build"
+    include_bitcode: false,
+    include_symbols: false,
+    output_directory: "../build"
   )
 
  # build_app(project: ENV['FASTLANE_PROJECT_PATH'], scheme: ENV['FASTLANE_SCHEME'])
