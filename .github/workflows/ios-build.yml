@@ -125,7 +125,7 @@ jobs:
           gem install down
           bundle _2.4.22_ install
           # bundle exec fastlane build_and_echo_ipa_url bundle_identifier:${{ env.BUNDLE_IDENTIFIER }}
-          bundle exec fastlane beta bundle_identifier:"${{ github.event.inputs.BUNDLE_ID }}"
+          bundle exec fastlane beta bundle_identifier:"${{ github.event.inputs.BUNDLE_ID }}" --verbose
         working-directory: ./ios
         env:
           FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
