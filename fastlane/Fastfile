@@ -27,6 +27,8 @@ before_all do |lane, options|
       lock_when_sleeps: true,
       password: ENV["KEYCHAIN_PASSWORD"]
     )
+    sh "security unlock-keychain -p #{ENV['KEYCHAIN_PASSWORD']} #{ENV['KEYCHAIN_NAME']}"
+
     sh 'brew install graphicsmagick'
   end
 end
