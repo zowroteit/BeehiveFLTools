@@ -212,8 +212,16 @@ lane :beta do |options|
     target_filter: ENV['FASTLANE_SCHEME'], # use environment variable
     profile: profile_path,
   )
+  gym(
+    scheme: ENV['FASTLANE_SCHEME'],
+    clean: true,
+    export_method: "app-store", # Change to "development" or "ad-hoc" as needed
+    include_bitcode: true,
+    include_symbols: true,
+    output_directory: "./build"
+  )
 
-  build_app(project: ENV['FASTLANE_PROJECT_PATH'], scheme: ENV['FASTLANE_SCHEME'])
+ # build_app(project: ENV['FASTLANE_PROJECT_PATH'], scheme: ENV['FASTLANE_SCHEME'])
 
   upload_to_testflight(
     skip_waiting_for_build_processing: true,
