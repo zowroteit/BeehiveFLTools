@@ -215,7 +215,7 @@ lane :beta do |options|
   match(type: "appstore") # You can change this to "development" or "adhoc" depending on your needs
 
   gym(
-    scheme: scheme,
+    scheme: ENV['FASTLANE_SCHEME'],
     clean: true,
     export_method: "app-store", # Change to "development" or "ad-hoc" as needed
     include_bitcode: false,
